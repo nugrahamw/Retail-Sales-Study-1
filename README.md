@@ -4,18 +4,18 @@
 
 **Project Title**: Retail Sales Analysis  
 **Level**: Beginner  
-**Database**: `p1_retail_db`
+**Database**: `p1_sql`
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+Project ini merupakan project pertama saya menggunakan PosgreeSQL yang dimulai dari tanggal 28 September 2026 - 3 Oktober 2026. Pada Project ini saya menggunakan data dari Youtube : Zero Analyst dan juga sekaligus belajar bagaimana menggunakannya. Saya belajar cukup banyak pada project pertama ini mulai dari cara mengupload, cara membersihkan data, mengeksplorasi data, dan bagaimana cara menguploadnya ke Github.
 
-## Objectives
+## Objek
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+1. **Database Setup**: Membuat tabel dan kolomnya kemudian mengupload data-datanya.
+2. **Data Cleaninng**: Mengidentifikasi data yang hilang atau duplikat kemudian mencari penyelesaiannya.
+3. **Exploratory Data Analysis (EDA)**: Mengeskplorasi data secara rinci untuk mencari tahu apa saja yang bisa diambil dari data.
+4. **Business Analysis**: Menjawab pertanyaan-pertanyaan bisnis menggunakan SQL.
 
-## Project Structure
+## Struktur Projek
 
 ### 1. Database Setup
 
