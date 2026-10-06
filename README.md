@@ -19,65 +19,68 @@ Project ini merupakan project pertama saya menggunakan PosgreeSQL yang dimulai d
 
 ### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Membuat Database di Posgree**:  Pertama adalah membuat database dengan naman `p1_sql`.
+- **Membuat Table**: Kemudian di lanjutkan dengan membuat tabel dengan nama `retail_sales`. Tabel ini menyimpaan data penjualan pada suatu toko dengan struktur tabel transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
 
 ```sql
-CREATE DATABASE p1_retail_db;
-
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
+CREATE TABLE retail_sales (
+	transactions_id INT PRIMARY KEY,
+	sale_date DATE,
+	sale_time TIME,
+	customer_id INT,
+	gender VARCHAR(15),
+	age INT,
+	category VARCHAR(15),
+	quantiy INT,
+	price_per_unit FLOAT,
+	cogs FLOAT,
+	total_sale FLOAT
 );
 ```
 
 ### 2. Data Exploration & Cleaning
 
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
+- **Record Count**: Mencari jumlah baris pada dataset.
+- **Customer Count**: Mencari jumlah data unik pelanggan.
+- **Category Count**: Mengidentifikasi data unik pada katoegori produk.
+- **Null Value Check**: Mengecek data null dan mengatasinya.
 
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
-
+SELECT * FROM retail_sales LIMIT 10;
+-- Cek Jumlah Data
+SELECT COUNT (*) FROM retail_sales;
+-- Cek NULL
 SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
+WHERE
+	transactions_id IS NULL OR sale_date IS NULL OR sale_time IS NULL OR
+    customer_id IS NULL OR gender IS NULL OR category IS NULL OR
+	quantiy IS NULL OR price_per_unit IS NULL OR cogs IS NULL OR
+	total_sale IS NULL
+-- Hapus Missing Value
 DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+WHERE
+    transactions_id IS NULL OR sale_date IS NULL OR sale_time IS NULL OR
+    customer_id IS NULL OR gender IS NULL OR category IS NULL OR
+	quantiy IS NULL OR price_per_unit IS NULL OR cogs IS NULL OR
+	total_sale IS NULL
+-- Total penjualan
+SELECT COUNT (*) as total_sales FROM retail_sales;
+-- Total Pembeli
+SELECT COUNT (DISTINCT customer_id) FROM retail_sales;
 ```
 
 ### 3. Data Analysis & Findings
 
-The following SQL queries were developed to answer specific business questions:
+Menggunakan SQL untuk menjawab beberapa pertanyaan bisnis:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
+1. **Menunjukkan Penjualan pada tanggak 5 November 2022**
 ```sql
 SELECT *
 FROM retail_sales
 WHERE sale_date = '2022-11-05';
 ```
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
+2. **Mencari Semua transaksi dengan kategori 'Clothing' yang terjual lebih dari 4 pada bulan Nov-2022**
 ```sql
 SELECT 
   *
@@ -87,20 +90,20 @@ WHERE
     AND 
     TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
     AND
-    quantity >= 4
+    quantiy >= 4;
 ```
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
+3. **Total Penjualan untuk setiap kategori**
 ```sql
 SELECT 
     category,
     SUM(total_sale) as net_sale,
     COUNT(*) as total_orders
 FROM retail_sales
-GROUP BY 1
+GROUP BY 1;
 ```
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
+4. **Rata-rata umur pembeli pada kategori 'Beauty'**
 ```sql
 SELECT
     ROUND(AVG(age), 2) as avg_age
@@ -108,13 +111,13 @@ FROM retail_sales
 WHERE category = 'Beauty'
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+5. **Menunjukkan transaksi yang lebih dari 1000**
 ```sql
 SELECT * FROM retail_sales
 WHERE total_sale > 1000
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+6. **Menunjukkan total transaksi setiap kategori dan gender**
 ```sql
 SELECT 
     category,
@@ -125,10 +128,10 @@ GROUP
     BY 
     category,
     gender
-ORDER BY 1
+ORDER BY 1;
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+7. **Menunjukkan rata-rata transaksi setiap bulan kemudian mencari bulan dengan rata-rata penjualan terbanyak setiap tahun**
 ```sql
 SELECT 
        year,
@@ -144,65 +147,61 @@ SELECT
 FROM retail_sales
 GROUP BY 1, 2
 ) as t1
-WHERE rank = 1
+WHERE rank = 1 
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+8. **Mencari 5 costumer dengan pembelian (transaksi) paling banyak**
 ```sql
 SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
+	customer_id,
+	SUM (total_sale) as total_sales
 FROM retail_sales
 GROUP BY 1
 ORDER BY 2 DESC
-LIMIT 5
+LIMIT 5;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+9. **Mencari banyak 'Unique Customer' yang melakukan transaksi untuk setiap kategori**
 ```sql
 SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
+	category,
+	COUNT (DISTINCT customer_id)
 FROM retail_sales
-GROUP BY category
+GROUP BY 1
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+10. **Penjualan berdasarkan waktu (shift) pagi, siang, dan malam**
 ```sql
-WITH hourly_sale
-AS
+WITH shift_trans
+AS 
 (
 SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
+	CASE
+		WHEN EXTRACT (HOUR FROM sale_time) < 12 THEN 'Pagi'
+		WHEN EXTRACT (HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Siang'
+		ELSE 'Malam'
+	END as shift
 FROM retail_sales
 )
 SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
+	shift,
+	COUNT (*) as total_order
+FROM shift_trans
 GROUP BY shift
+
+-- Selesai :)
 ```
 
-## Findings
+## Pembahaasan
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+- **Mengenai data**: Dataset asli berjumlah 2000, kemudian dilakukan penghapusan karena terdapat data kosong (missing value) sehingga data yang dipakai berjumlah 1997
+- **Transaksi tertinggi**: Beberapa transaksi memiliki jumlah penjualan lebih dari 1000, mengindikasikan pembelian premium.
+- **Sales Trends**: Analisis bulanan mencari bulan dengan rata-rata penjualan tertinggi.
+- **Customer Insights**: Mencari pelanggan dengan pembelian terbanyak dan mencari kategori yang bpaling sering dibeli oleh pelanggan.
 
-## Reports
+## Kesimpulan
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
-
-## Conclusion
-
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
+Project ini membahas mengenai penggunaan SQL pada database pada suatu dataset toko. Dimulai dengan melakukan pembersihan lalu mencari insight bisnis. 
 
 ## How to Use
 
@@ -211,17 +210,7 @@ This project serves as a comprehensive introduction to SQL for data analysts, co
 3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
 4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
 
-## Author - Zero Analyst
+## Author - Nugraha Marga Wiguna
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
+Projek pertama saya mengenai SQL.
 
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
